@@ -1,44 +1,23 @@
 import functions_framework
 
 @functions_framework.http
-def hello_world(request):
-    """
-    Responds to any HTTP request.
-
-    This function responds to incoming HTTP requests with a customizable message.
-    If a 'message' parameter is provided as a query parameter or in the JSON body,
-    it will be returned in the response. Otherwise, a default "Hello World!matayuuu!"
-    message will be sent.
-
+def hello_http(request):
+    """HTTP Cloud Function.
     Args:
-        request (flask.Request): The incoming HTTP request object.
-
+        request (flask.Request): The request object.
+        <https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data>
     Returns:
-        str: The response message. If a 'message' parameter is provided, it will be returned.
-             Otherwise, the default message will be returned.
-
-    Example Usage:
-        If you make a GET request to this function with a query parameter:
-        /hello?message=Greetings
-
-        The response will be:
-        "Greetings"
-
-        If you make a POST request with the following JSON body:
-        {
-            "message": "Custom Message"
-        }
-
-        The response will be:
-        "Custom Message"
-
-        If no 'message' parameter is provided, the response will be:
-        "Hello World ~ Cloud Build"
+        The response text, or any set of values that can be turned into a
+        Response object using `make_response`
+        <https://flask.palletsprojects.com/en/1.1.x/api/#flask.make_response>.
     """
-    request_json = request.get_json()
-    if request.args and 'message' in request.args:
-        return request.args.get('message')
-    elif request_json and 'message' in request_json:
-        return request_json['message']
+    request_json = request.get_json(silent=True)
+    request_args = request.args
+
+    if request_json and 'name' in request_json:
+        name = request_json['name']
+    elif request_args and 'name' in request_args:
+        name = request_args['name']
     else:
-        return f'Hello World ~ Cloud Build'
+        name = 'World'
+    return 'Hello {}!'.format(name)
