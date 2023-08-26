@@ -1,0 +1,16 @@
+# Ignore Python virtual environment
+venv/
+
+# Ignore compiled binary files
+*.pyc
+*.pyo
+__pycache__/
+
+# Ignore editor/IDE specific files
+.vscode/
+.idea/
+*.swp
+
+# Ignore sensitive files
+config.ini
+credentials.json
