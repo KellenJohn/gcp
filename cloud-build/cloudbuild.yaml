@@ -6,6 +6,6 @@ steps:
   - deploy
   - cloud-build-demo
   - --region=asia-east1
-  - --source=cloud-build
+  - --source=cloud-build/
   - --trigger-http
   - --runtime=python39
