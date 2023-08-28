@@ -1,0 +1,25 @@
+# cloudbuild.yaml
+
+steps:
+  # Step: Get the Project variable
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        export PROJECT_ID=$(gcloud config get-value project)
+        # Continue with your build steps that use $PROJECT_ID
+
+  # Step: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t',
+      'us-west2-docker.pkg.dev/$PROJECT_ID/quickstart-docker-repo/quickstart-image:tag2',
+      '.'
+    ]
+  # You can add more steps here for testing, deploying, etc.
+
+images:
+  # Specify the Docker image to push
+  - 'us-west2-docker.pkg.dev/$PROJECT_ID/quickstart-docker-repo/quickstart-image:tag2'
