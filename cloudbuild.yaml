@@ -1,14 +1,49 @@
 steps:
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  args:
-  - gcloud
-  - functions
-  - deploy
-  - cloud-build-demo
-  - --region=asia-east1
-  - --source=.
-  - --trigger-http
-  - --runtime=python39
+  # 檢查代碼，安裝必要的工具
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud components install beta
+
+  # 部署 Cloud Function
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'functions'
+      - 'deploy'
+      - 'cloud-build-demo'
+      - '--entry-point'
+      - 'hello_world'
+      - '--runtime'
+      - 'python39'
+      - '--trigger-http'
+      - '--allow-unauthenticated'
+      - '--region=us-central1'  # 設定你的區域
+      - '--set-env-vars'
+      - 'FUNCTION_MEMORY_MB=128'  # 設定記憶體為
+      - '--set-env-vars'
+      - 'FUNCTION_CPU=0.0083'     # 設定 CPU 數量
+      - '--max-instances'
+      - '3'  # 設定最多 3 個執行個體
+    timeout: '1600s'  # 如果需要，你可以調整這個超時時間
 
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: CLOUD_LOGGING_ONLY    
+
+# 可選：指定分支條件，只有在特定分支上觸發部署
+# images:
+#   - 'gcr.io/$PROJECT_ID/my-custom-image'
+#   - 'gcr.io/$PROJECT_ID/my-other-image'
+# branches:
+#   - 'main'
+
+# 可選：設定觸發條件，例如提交時觸發
+# options:
+#   machineType: 'N1_HIGHCPU_8'
+
+
+
+
+
+
