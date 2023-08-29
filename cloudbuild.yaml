@@ -20,10 +20,6 @@ steps:
       - '--trigger-http'
       - '--allow-unauthenticated'
       - '--region=us-central1'  # 設定你的區域
-      - '--set-env-vars'
-      - 'FUNCTION_MEMORY_MB=128'  # 設定記憶體為
-      - '--set-env-vars'
-      - 'FUNCTION_CPU=0.0083'     # 設定 CPU 數量
       - '--max-instances'
       - '3'  # 設定最多 3 個執行個體
     timeout: '1600s'  # 如果需要，你可以調整這個超時時間
