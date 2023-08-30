@@ -1,0 +1,39 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-t', 
+      '$PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG', 
+      '.'
+    ]
+
+  # Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push', 
+      '$PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG'
+    ]
+
+  # Scan the container image using Trivy and save report
+  - name: 'aquasec/trivy'
+    args: [
+      '--format', 'json', 
+      '--output', 'trivy-report.json', 
+      'image', 
+      '--no-cache', 
+      '$PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG'
+    ]
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'run', 'deploy', 'my-serverless-app', 
+      '--image', '$PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG', 
+      '--region', '$PROJECT_REGION'
+    ]
+
+images:
+  - $PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG
+
