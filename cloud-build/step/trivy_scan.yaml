@@ -1,8 +1,0 @@
-  # Scan the container image using Trivy and save report
-  - name: 'aquasec/trivy'
-    args: [
-      '--format', 'json', 
-      '--output', 'trivy-report.json', 
-      'image', 
-      '$_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG'
-    ]
