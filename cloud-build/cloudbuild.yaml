@@ -4,50 +4,33 @@ steps:
     args: [
       'build', 
       '-t', 
-      '$_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG', 
+      '$_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG', 
       '.'
     ]
+
+# 引入模块
+- include: 'steps/trivy_scan.yaml'
+
 
   # Push the container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push', 
-      '$_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG'
+      '$_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG'
     ]
 
-  # Scan the container image using Trivy and save report
-  - name: 'aquasec/trivy'
-    args: [
-      '--format', 'json', 
-      '--output', 'trivy-report.json', 
-      'image', 
-      '$_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG'
-    ]
-
-  # Deploy container image to Cloud Run
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
-    args: [
-      'run', 'deploy', 'my-serverless-app', 
-      '--image', '$_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG', 
-      '--region', '$_PROJECT_REGION',
-      '--allow-unauthenticated'
-      # '--no-allow-unauthenticated'  # 禁止未經身份驗證的訪問
-    ]
-
-
+- include: 'steps/deploy_cloud_run.yaml'
 
 images:
-  - $_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG
+  - $_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG
 
 # 專案資訊
 substitutions:
-  _PROJECT_ID: esun-cncf
+  # _PROJECT_ID: esun-cncf
   _PROJECT_REGION: us-central1
-  _REPOSITORY: my-app-repo
+  _REPOSITORY: my-app-repo       # service name
   _IMAGE: my-serverless-app
-  _TAG: v0.0.2
-
+  _TAG: v0.0.3
 
 options:
   # machineType: N1_HIGHCPU_8  # 设置机器类型
