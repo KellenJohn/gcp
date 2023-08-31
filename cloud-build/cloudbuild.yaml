@@ -4,7 +4,7 @@ steps:
     args: [
       'build', 
       '-t', 
-      '$PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG', 
+      '$_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG', 
       '.'
     ]
 
@@ -12,7 +12,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push', 
-      '$PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG'
+      '$_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG'
     ]
 
   # Scan the container image using Trivy and save report
@@ -21,8 +21,7 @@ steps:
       '--format', 'json', 
       '--output', 'trivy-report.json', 
       'image', 
-      '--no-cache', 
-      '$PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG'
+      '$_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG'
     ]
 
   # Deploy container image to Cloud Run
@@ -30,10 +29,27 @@ steps:
     entrypoint: gcloud
     args: [
       'run', 'deploy', 'my-serverless-app', 
-      '--image', '$PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG', 
-      '--region', '$PROJECT_REGION'
+      '--image', '$_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG', 
+      '--region', '$_PROJECT_REGION',
+      '--allow-unauthenticated'
+      # '--no-allow-unauthenticated'  # 禁止未經身份驗證的訪問
     ]
 
-images:
-  - $PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG
 
+
+images:
+  - $_PROJECT_REGION-docker.pkg.dev/$_PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG
+
+# 專案資訊
+substitutions:
+  _PROJECT_ID: esun-cncf
+  _PROJECT_REGION: us-central1
+  _REPOSITORY: my-app-repo
+  _IMAGE: my-serverless-app
+  _TAG: v0.0.2
+
+
+options:
+  # machineType: N1_HIGHCPU_8  # 设置机器类型
+  substitution_option: ALLOW_LOOSE
+  logging: CLOUD_LOGGING_ONLY
