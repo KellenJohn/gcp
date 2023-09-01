@@ -1,13 +1,17 @@
 # api-deploy.cloudbuild.yaml contents
 
 steps:
-  # Print the full Pub/Sub message for debugging
+  # Install jq and print the full Pub/Sub message for debugging
   - id: "Echo Pub/Sub message"
     name: gcr.io/cloud-builders/gcloud
     entrypoint: /bin/bash
     args:
       - '-c'
       - |
+        # Install jq
+        apt-get update && apt-get install -y jq
+
+        # Print Pub/Sub Message
         echo "Pub/Sub Message: ${_BODY}" | jq .
 
   # Cloud Run Deploy
