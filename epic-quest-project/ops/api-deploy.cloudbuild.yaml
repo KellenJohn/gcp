@@ -8,11 +8,7 @@ steps:
     args:
       - '-c'
       - |
-        # Install jq
-        apt-get update && apt-get install -y jq
-
-        # Print Pub/Sub Message
-        echo "Pub/Sub Message: ${_BODY}" | jq .
+        echo ${_BODY}
 
   # Cloud Run Deploy
   - id: "Deploy to Cloud Run"
