@@ -18,25 +18,6 @@ steps:
       - '-c'
       - |
         echo "Pub/Sub Message: ${_BODY}" | jq .
-        
-  # Use jq to parse Pub/Sub message JSON
-  - id: "Parse Pub/Sub Message"
-    name: gcr.io/cloud-builders/gcloud
-    entrypoint: /bin/bash
-    args:
-      - '-c'
-      - |
-        # Parse JSON using jq or You can search the _SUBSTITION
-        ACTION=$(echo ${_BODY} | jq -r '.message.data.action')
-        RESOURCE=$(echo ${_BODY} | jq -r '.message.data.tag')
-        
-        # Check if conditions are met
-        if [[ "${ACTION}" == "INSERT" && "${RESOURCE}" == "asia-east1-docker.pkg.dev/esun-cncf/epic-quest/server-side" ]]; then
-          echo "Conditions met. Deploying to Cloud Run."
-          # Add your deploy command here
-        else
-          echo "Conditions not met. Skipping deployment."
-        fi       
 
   # Cloud Run Deploy
   - id: "Deploy to Cloud Run"
