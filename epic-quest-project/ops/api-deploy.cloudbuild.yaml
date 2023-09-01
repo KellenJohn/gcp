@@ -2,15 +2,6 @@
 
 steps:
   # Print the full Pub/Sub message for debugging
-  - id: "Echo Pub/Sub message"   
-    name: gcr.io/cloud-builders/gcloud
-    entrypoint: /bin/bash
-    args:
-      - '-c'
-      - |
-        echo ${_BODY}
-
-  # Print the full Pub/Sub message for debugging
   - id: "Echo Pub/Sub message"
     name: gcr.io/cloud-builders/gcloud
     entrypoint: /bin/bash
