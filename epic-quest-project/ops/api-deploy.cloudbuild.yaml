@@ -1,0 +1,36 @@
+# api-deploy.cloudbuild.yaml contents
+
+steps:
+  # Print the full Pub/Sub message for debugging
+  - id: "Echo Pub/Sub message"   
+    name: gcr.io/cloud-builders/gcloud
+    entrypoint: /bin/bash
+    args:
+      - '-c'
+      - |
+        echo ${_BODY}
+
+  # Cloud Run Deploy
+  - id: "Deploy to Cloud Run"
+    name: gcr.io/cloud-builders/gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_IMAGE_NAME}
+      - --region=${_REGION}
+      - --revision-suffix=${_REVISION}
+      - --project=${PROJECT_ID}
+      - --allow-unauthenticated
+      - --tag=${_IMAGE_TAG}
+
+
+# 專案資訊
+substitutions:
+  _SERVICE: epic-quest
+
+
+options:
+  # machineType: N1_HIGHCPU_8  # 设置机器类型
+  substitution_option: ALLOW_LOOSE
+  logging: CLOUD_LOGGING_ONLY      
