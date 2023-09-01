@@ -1,11 +1,53 @@
 steps:
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  args:
-  - gcloud
-  - functions
-  - deploy
-  - cloud-build-demo
-  - --region=asia-east1
-  - --source=cloud-build/
-  - --trigger-http
-  - --runtime=python39
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-t', 
+      '$_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG', 
+      '.'
+    ]
+
+  # Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push', 
+      '$_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG'
+    ]
+
+  # Scan the container image using Trivy and save report
+  - name: 'aquasec/trivy'
+    args: [
+      '--format', 'json', 
+      '--output', 'trivy-report.json', 
+      'image', 
+      '$_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG'
+    ]
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'run', 'deploy', 'my-serverless-app', 
+      '--image', '$_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG', 
+      '--region', '$_PROJECT_REGION',
+      '--max-instances', '3',         # 設定最大實例數量為 3
+      '--allow-unauthenticated'
+      # '--no-allow-unauthenticated'  # 禁止未經身份驗證的訪問
+    ]
+
+images:
+  - $_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG
+
+# 專案資訊
+substitutions:
+  # _PROJECT_ID: esun-cncf
+  _PROJECT_REGION: us-central1
+  _REPOSITORY: my-app-repo
+  _IMAGE: my-serverless-app
+  _TAG: v0.0.3
+
+options:
+  # machineType: N1_HIGHCPU_8  # 设置机器类型
+  substitution_option: ALLOW_LOOSE
+  logging: CLOUD_LOGGING_ONLY

@@ -1,0 +1,15 @@
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-t', 
+      '$_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG', 
+      '.'
+    ]
+
+  # Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push', 
+      '$_PROJECT_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$_TAG'
+    ]

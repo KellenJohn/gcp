@@ -1,0 +1,22 @@
+# api-build.cloudbuild.yaml contents
+
+steps:
+  # Docker Build 
+  - name: 'gcr.io/cloud-builders/docker'
+    args: 
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/$_REPOSITORY/$_IMAGE:$_TAG'
+      - 'server-side/.'
+
+# Store in Artifact Registry
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/$_REPOSITORY/$_IMAGE:$_TAG'
+
+
+# 專案資訊
+substitutions:
+  #_PROJECT_REGION: us-central1
+  _REPOSITORY: epic-quest       # service or IF project alias  
+  _IMAGE: server-side
+  _TAG: latest
