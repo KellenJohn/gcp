@@ -20,3 +20,9 @@ substitutions:
   _REPOSITORY: epic-quest       # service or IF project alias  
   _IMAGE: server-side
   _TAG: latest
+
+
+options:
+  # machineType: N1_HIGHCPU_8  # 设置机器类型
+  substitution_option: ALLOW_LOOSE
+  logging: CLOUD_LOGGING_ONLY
