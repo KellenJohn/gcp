@@ -7,8 +7,7 @@ steps:
       - 'build'
       - '-t'
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/$_REPOSITORY/$_IMAGE:$_TAG'
-      - '.'
-    dir: '/epic-quest-project/server-side/'
+      - '/workspace/epic-quest-project/server-side/'
 
 # Store in Artifact Registry
 images:
