@@ -1,6 +1,6 @@
 # setting environment variables
-export PROJECT_ID=esun-cncf
-export REGION=asia-east1
+export PROJECT_ID=<your Project>
+export REGION=<your Region>
 
 # enable relevant apis
 gcloud services enable run.googleapis.com \
