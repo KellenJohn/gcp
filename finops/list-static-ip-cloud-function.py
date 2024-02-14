@@ -1,4 +1,5 @@
 import os
+import logging
 from google.cloud import compute_v1
 
 project = os.environ.get('GCP_PROJECT')
@@ -13,6 +14,9 @@ def list_unused_static_ips(request):
     Returns:
         dict: 包含未使用的靜態 IP 地址資訊的字典，格式為 {'unused_static_ips': unused_ips}。
     """
+    # 處理一下 Cloud Logging 中只顯示了 DEBUG 級別的記錄，但並沒有顯示 INFO 級別的記錄
+    logging.getLogger().setLevel(logging.INFO)
+    logging.info("開始檢查未使用的靜態 IP 地址...")
 
     # 從環境變數中獲取要檢查的所有地區
     regions = get_all_regions()
@@ -40,6 +44,10 @@ def list_unused_static_ips(request):
             if address.status == 'RESERVED':
                 unused_ips.append(address_details)
 
+    logging.info(f"找到 {len(unused_ips)} 個未使用的靜態 IP 地址")
+    for ip in unused_ips:
+        logging.info(ip)
+        
     # 返回所有未使用的靜態 IP 地址資訊
     return {'unused_static_ips': unused_ips}
 
@@ -50,7 +58,7 @@ def get_all_regions():
     Returns:
         list: 包含所有可用地區名稱的列表。
     """
-
+    
     # 初始化 Regions 客戶端
     region_client = compute_v1.RegionsClient()
 
