@@ -120,6 +120,6 @@ def is_compute_engine_api_enabled(project_id):
 
     return response['state'] == 'ENABLED'
 
-# 調用函數来列出專案
+# 調用函數列出所有專案在未使用 IP 的資訊
 if __name__ == '__main__':
     list_projects()
