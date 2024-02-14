@@ -32,7 +32,7 @@ def list_unused_static_ips(request):
  
     # 返回所有未使用的靜態 IP 地址資訊
     print(unused_ips)
-    return {'unused_static_ips': unused_ips}
+    return {'unused__ips(External&Internal IP)': unused_ips}
  
 def get_all_regions():
     # 初始化 Regions Client
